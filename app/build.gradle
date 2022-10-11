@@ -1,0 +1,130 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
+}
+
+// Versioning
+def versionMajor="1"
+def versionMinor="0"
+def versionPatch="0"
+def appVersion=versionMajor + "." + versionMinor + "." +versionPatch
+
+// Get Properties
+def keystorePropertiesFile=rootProject.file("local.properties")
+def keystoreProperties=new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.weather.app"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName appVersion
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildFeatures {
+        viewBinding{
+            enabled true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    flavorDimensions 'default'
+    productFlavors {
+
+        dev {
+            dimension 'default'
+            versionNameSuffix "_dev"
+            buildConfigField "String", "API_BASE_URL", keystoreProperties.getProperty("API_BASE_URL_DEV")
+            buildConfigField "String", "API_KEY", keystoreProperties.getProperty("API_KEY")
+        }
+        uat {
+            dimension 'default'
+            versionNameSuffix "_test"
+            buildConfigField "String", "API_BASE_URL", keystoreProperties.getProperty("API_BASE_URL_TEST")
+            buildConfigField "String", "API_KEY", keystoreProperties.getProperty("API_KEY")
+        }
+        preprod {
+            dimension 'default'
+            versionNameSuffix "_preprod"
+            buildConfigField "String", "API_BASE_URL", keystoreProperties.getProperty("API_BASE_URL_PREPROD")
+            buildConfigField "String", "API_KEY", keystoreProperties.getProperty("API_KEY")
+        }
+        prod {
+            dimension 'default'
+            versionNameSuffix "_prod"
+            buildConfigField "String", "API_BASE_URL", keystoreProperties.getProperty("API_BASE_URL_PROD")
+            buildConfigField "String", "API_KEY", keystoreProperties.getProperty("API_KEY")
+        }
+    }
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def project = "WeatherApp"
+            def formattedDate = new Date().format("dd_MM_yyy_HH_mm")
+            def buildType = variant.buildType.name
+            def apkName = project + "_" + formattedDate + "_" + appVersion + "_" + buildType + ".apk"
+            outputFileName = new File(apkName)
+        }
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    implementation project (path:':openweather')
+
+    // Timber - For Logs
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    // Dagger Hilt
+    implementation 'com.google.dagger:hilt-android:2.44'
+    kapt 'com.google.dagger:hilt-compiler:2.44'
+
+// Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    // Moshi - JSON Converter
+    implementation 'com.squareup.moshi:moshi-kotlin:1.14.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+
+    // Activity KTX for viewModels()
+    implementation 'androidx.activity:activity-ktx:1.6.0'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
+
+}
+
+kapt {
+    correctErrorTypes true
+}

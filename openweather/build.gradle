@@ -1,0 +1,106 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-android'
+}
+// Get Properties
+def keystorePropertiesFile=rootProject.file("local.properties")
+def keystoreProperties=new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    compileSdk 33
+
+    defaultConfig {
+       // applicationId "com.weather.openweather"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    flavorDimensions 'default'
+    productFlavors {
+        dev {
+            dimension 'default'
+            versionNameSuffix "_dev"
+            buildConfigField "String", "API_BASE_URL", keystoreProperties.getProperty("API_BASE_URL_DEV")
+            buildConfigField "String", "API_KEY", keystoreProperties.getProperty("API_KEY")
+        }
+        uat {
+            dimension 'default'
+            versionNameSuffix "_test"
+            buildConfigField "String", "API_BASE_URL", keystoreProperties.getProperty("API_BASE_URL_TEST")
+            buildConfigField "String", "API_KEY", keystoreProperties.getProperty("API_KEY")
+        }
+        preprod {
+            dimension 'default'
+            versionNameSuffix "_preprod"
+            buildConfigField "String", "API_BASE_URL", keystoreProperties.getProperty("API_BASE_URL_PREPROD")
+            buildConfigField "String", "API_KEY", keystoreProperties.getProperty("API_KEY")
+        }
+        prod {
+            dimension 'default'
+            versionNameSuffix "_prod"
+            buildConfigField "String", "API_BASE_URL", keystoreProperties.getProperty("API_BASE_URL_PROD")
+            buildConfigField "String", "API_KEY", keystoreProperties.getProperty("API_KEY")
+        }
+    }
+
+}
+
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // Dagger Hilt
+    implementation 'com.google.dagger:hilt-android:2.44'
+    kapt 'com.google.dagger:hilt-compiler:2.44'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    // Moshi - JSON Converter
+    implementation "com.squareup.moshi:moshi-kotlin:$rootProject.moshiVersion"
+    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+
+    // Room components
+    implementation "androidx.room:room-ktx:2.4.3"
+    kapt "androidx.room:room-compiler:2.4.3"
+    androidTestImplementation "androidx.room:room-testing:2.4.3"
+
+
+
+
+}
+kapt {
+    correctErrorTypes true
+}
