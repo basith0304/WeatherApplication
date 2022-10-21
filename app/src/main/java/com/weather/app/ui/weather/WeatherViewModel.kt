@@ -1,15 +1,16 @@
 package com.weather.app.ui.weather
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.weather.app.BuildConfig
-import com.weather.app.BuildConfig.API_KEY
 
 import com.weather.openweather.common.Resource
+import com.weather.openweather.data.remote.dto.WeatherData
+import com.weather.openweather.domain.usecase.weather.WeatherUIState
 import com.weather.openweather.domain.usecase.weather.WeatherUseCase
-import com.weather.openweather.domain.usecase.weather.WeatherViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.round
 
@@ -18,9 +19,8 @@ class WeatherViewModel @Inject constructor(
     private val weatherUseCase: WeatherUseCase
 ) : ViewModel() {
 
-
-    private val _weatherData = MutableStateFlow(WeatherViewState())
-    val weatherData: StateFlow<WeatherViewState> = _weatherData
+    private val _weatherState = MutableStateFlow<WeatherUIState>(WeatherUIState.Empty)
+    val weatherState: StateFlow<WeatherUIState> = _weatherState
 
     fun getWeather(latitude: String, longitude: String){
 
@@ -29,15 +29,17 @@ class WeatherViewModel @Inject constructor(
             when(result){
 
                 is Resource.Success ->{
-                    _weatherData.value = WeatherViewState(response = result.data)
+                    _weatherState.value = WeatherUIState.Success(result.data)
                 }
-
                 is Resource.Error ->{
-                    _weatherData.value = WeatherViewState(error = result.data?.message ?: " An unexpected error")
+                    if(result.data!=null)
+                        _weatherState.value = WeatherUIState.Error(result.data?.message ?: " An unexpected error")
+                    else
+                        _weatherState.value = WeatherUIState.Error(result.message?: " An unexpected error")
                 }
 
                 is Resource.Loading ->{
-                    _weatherData.value = WeatherViewState(isLoading = true)
+                    _weatherState.value = WeatherUIState.Loading
                 }
             }
         }.launchIn(viewModelScope)

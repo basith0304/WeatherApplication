@@ -10,4 +10,7 @@ interface WeatherApi {
 
     @GET("/data/2.5/weather")
     suspend fun getWeather(@Query("lat") latitude : String, @Query("lon") longitude : String, @Query("appid") apiKey : String) : Response<WeatherData>
+
+    @GET("/data/2.5/forecast/daily")
+    suspend fun getWeatherPredictions(@Query("lat") latitude : String, @Query("lon") longitude : String, @Query("appid") apiKey : String,@Query("cnt") count : String) : Response<WeatherData>
 }

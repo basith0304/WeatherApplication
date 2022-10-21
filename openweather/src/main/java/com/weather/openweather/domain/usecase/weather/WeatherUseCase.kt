@@ -4,8 +4,11 @@ import com.weather.openweather.common.Constants
 import com.weather.openweather.common.Resource
 import com.weather.openweather.data.remote.dto.WeatherData
 import com.weather.openweather.data.repository.MainRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -32,6 +35,7 @@ class WeatherUseCase @Inject constructor(private val repository: MainRepository)
             emit(Resource.Error(e.localizedMessage?: "An unexpected error occurred"))
         }
 
-    }
+    }.catch { emit(Resource.Error(it.localizedMessage?: "An unexpected error occurred")) }
+        .flowOn(Dispatchers.IO)
 
 }

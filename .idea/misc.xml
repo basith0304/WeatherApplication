@@ -3,8 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/button_bg.xml" value="0.2735" />
+        <entry key="app/src/main/res/drawable/card_view_bg.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/edittext.xml" value="0.1815" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.45" />
+        <entry key="app/src/main/res/layout/bottom_sheet_metric.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_weather_info.xml" value="3.0" />
+        <entry key="app/src/main/res/menu/menu.xml" value="0.8138173302107728" />
       </map>
     </option>
   </component>
